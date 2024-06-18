@@ -1,67 +1,46 @@
-import React, {useState, useMemo} from 'react'
-import styled from "styled-components";
-import bg from './img/bg.png'
-import {MainLayout} from './styles/Layouts'
-import Orb from './Components/Orb/Orb'
-import Navigation from './Components/Navigation/Navigation'
-import Dashboard from './Components/Dashboard/Dashboard';
-import Income from './Components/Income/Income'
-import Expenses from './Components/Expenses/Expenses';
-import { useGlobalContext } from './context/globalContext';
+import React from 'react';
+import Home from './pages/home/Home';
+import { NavLink, Routes, Route, useNavigate } from 'react-router-dom';
+import { Auth } from './pages/auth/Auth';
+import { useUser } from '@clerk/clerk-react';
 
 function App() {
-  const [active, setActive] = useState(1)
-
-  const global = useGlobalContext()
-  console.log(global);
-
-  const displayData = () => {
-    switch(active){
-      case 1:
-        return <Dashboard />
-      case 2:
-        return <Dashboard />
-      case 3:
-        return <Income />
-      case 4: 
-        return <Expenses />
-      default: 
-        return <Dashboard />
-    }
-  }
-
-  const orbMemo = useMemo(() => {
-    return <Orb />
-  },[])
+  const navigate = useNavigate();
+  
+  const navStyling = {
+    textDecoration: "none",
+    marginRight: "35px",
+    fontSize: "1.2vw",
+    fontWeight: "600"
+  };
+  const buttonStyle = {
+    padding: "5px 10px",
+    fontSize: "1.2vw",
+    borderRadius: "8px",
+    cursor: "pointer",
+    color: "purple",
+    backgroundColor: "white",
+    border: "transparent",
+  };
+  const handleClick = () => {
+    navigate('/auth');
+  };
 
   return (
-    <AppStyled bg={bg} className="App">
-      {orbMemo}
-      <MainLayout>
-        <Navigation active={active} setActive={setActive} />
-        <main>
-          {displayData()}
-        </main>
-      </MainLayout>
-    </AppStyled>
+    <>
+      <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 20px" }}>
+        <h1 className='header-Title' style={{ fontSize: "3rem", fontWeight: "800" }}>Spend Sense</h1>
+        <div>
+          <NavLink to="/" style={navStyling}>Home</NavLink>
+          <button style={buttonStyle} onClick={handleClick}>Login</button>
+        </div>
+      </nav>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/auth' element={<Auth />} />
+      </Routes>
+    </>
   );
 }
-
-const AppStyled = styled.div`
-  height: 100vh;
-  background-image: url(${props => props.bg});
-  position: relative;
-  main{
-    flex: 1;
-    background: rgba(252, 246, 249, 0.78);
-    border: 3px solid #FFFFFF;
-    backdrop-filter: blur(4.5px);
-    border-radius: 32px;
-    overflow-x: hidden;
-    &::-webkit-scrollbar{
-      width: 0;
-    }
-  }
-`;
 
 export default App;
